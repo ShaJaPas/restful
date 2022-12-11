@@ -13,11 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        run: docker build -t restful/restful ./src
-
       - name: Build app
-        run: docker-compose up -d
+        run: docker-compose up -d -- build
 
       - name: Run tests
         run: docker exec app poetry run pytest .
