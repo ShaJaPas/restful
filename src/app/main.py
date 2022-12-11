@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Query, status
+from fastapi import FastAPI, Query, status, Header
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+import json
+
 
 app = FastAPI()
 
@@ -21,6 +23,7 @@ def arithmetic_sum(
     """
     Сумма элементов арифметической прогрессии
     """
+
     if b <= a:
         return JSONResponse(
             content={
@@ -41,3 +44,8 @@ def geometric_sum(
     Сумма элементов геометрической прогрессии
     """
     return a * (step**n - 1) / (step - 1)
+
+
+@app.get("/user-agent/")
+def get_user_agent(user_agent: str = Header()):
+    return {"User-Agent": user_agent}
