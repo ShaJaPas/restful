@@ -20,4 +20,4 @@ jobs:
         run: docker-compose up -d
 
       - name: Run tests
-        run: docker exec -i app sh -c "pytest ."
+        run: docker exec app poetry run pytest .
