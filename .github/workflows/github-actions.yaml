@@ -18,3 +18,6 @@ jobs:
 
       - name: Run tests
         run: docker compose exec app poetry run pytest .
+
+      - name: Run flake8
+        run: docker compose exec app poetry run flake8 .
