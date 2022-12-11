@@ -17,4 +17,4 @@ jobs:
         run: docker compose up -d --build
 
       - name: Run tests
-        run: docker exec app poetry run pytest .
+        run: docker compose exec app poetry run pytest .
