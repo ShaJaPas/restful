@@ -1,9 +1,23 @@
-from fastapi import FastAPI, Query, status, Header
+from fastapi import Depends, FastAPI, Query, status, Header
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db import get_session, init_db, dispose_db
+from app.models import DbPerson, Person
 
 app = FastAPI()
+
+
+@app.on_event("startup")
+async def on_startup() -> None:
+    await init_db()
+
+
+@app.on_event("shutdown")
+async def on_shutdown() -> None:
+    await dispose_db()
 
 
 class BasicResponse(BaseModel):
@@ -46,5 +60,39 @@ def geometric_sum(
 
 
 @app.get("/user-agent/")
-def get_user_agent(user_agent: str = Header()) -> dict[str, str]:
+def get_user_agent(user_agent: str = Header(include_in_schema=False)) -> dict[str, str]:
     return {"User-Agent": user_agent}
+
+
+@app.get("/people", response_model=list[DbPerson])
+async def get_people(session: AsyncSession = Depends(get_session)) -> list[DbPerson]:
+    """
+    Список людей в базе данных
+    """
+    result = await session.execute(select(DbPerson))
+    people = result.scalars().all()
+    return [
+        DbPerson(
+            name=person.name,
+            sirname=person.sirname,
+            birthday=person.birthday,
+            id=person.id,
+        )
+        for person in people
+    ]
+
+
+@app.post("/people")
+async def add_person(
+    person: Person, session: AsyncSession = Depends(get_session)
+) -> DbPerson:
+    """
+    Добавить объект человека в БД
+    """
+    person = DbPerson(
+        name=person.name, sirname=person.sirname, birthday=person.birthday
+    )
+    session.add(person)
+    await session.commit()
+    await session.refresh(person)
+    return person
