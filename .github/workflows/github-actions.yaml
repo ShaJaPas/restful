@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build -t restful/restful .
+
+      - name: Build app
+        run: docker-compose up -d
+
+      - name: Run tests
+        run: docker exec -i app sh -c "pytest ."
