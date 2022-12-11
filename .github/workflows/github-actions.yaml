@@ -21,3 +21,6 @@ jobs:
 
       - name: Run flake8
         run: docker compose exec app poetry run flake8 .
+      
+      - name: Run mypy
+        run: docker compose exec app poetry run mypy .
