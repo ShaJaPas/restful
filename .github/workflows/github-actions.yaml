@@ -20,7 +20,7 @@ jobs:
         run: docker compose exec app poetry run pytest .
       
       - name: Run alembic tests
-        run: docker compose exec appp oetry run pytest --test-alembic
+        run: docker compose exec app oetry run pytest --test-alembic
 
       - name: Run flake8
         run: docker compose exec app poetry run flake8 .
