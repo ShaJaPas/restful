@@ -2,3 +2,6 @@
 .venv
 .vscode
 README.md
+__pycache__
+.mypy_cache
+.pytest_cache

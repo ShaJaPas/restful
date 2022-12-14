@@ -4,15 +4,10 @@ from pydantic import BaseModel
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_session, init_db, dispose_db
+from app.db import get_session, dispose_db
 from app.models import DbPerson, Person
 
 app = FastAPI()
-
-
-@app.on_event("startup")
-async def on_startup() -> None:
-    await init_db()
 
 
 @app.on_event("shutdown")
@@ -39,9 +34,7 @@ def arithmetic_sum(
 
     if b <= a:
         return JSONResponse(
-            content={
-                "message": "Последний элемент в прогрессии должен быть больше первого"
-            },
+            content={"message": "Последний элемент в прогрессии должен быть больше первого"},
             status_code=status.HTTP_400_BAD_REQUEST,
         )
     return (a + b) * n / 2
@@ -65,12 +58,12 @@ def get_user_agent(user_agent: str = Header(include_in_schema=False)) -> dict[st
 
 
 @app.get("/people", response_model=list[DbPerson])
-async def get_people(session: AsyncSession = Depends(get_session)) -> list[DbPerson]:
+async def get_person(session: AsyncSession = Depends(get_session)) -> list[DbPerson]:
     """
     Список людей в базе данных
     """
     result = await session.execute(select(DbPerson))
-    people = result.scalars().all()
+    people: list[DbPerson] = result.scalars().all()
     return [
         DbPerson(
             name=person.name,
@@ -83,15 +76,11 @@ async def get_people(session: AsyncSession = Depends(get_session)) -> list[DbPer
 
 
 @app.post("/people")
-async def add_person(
-    person: Person, session: AsyncSession = Depends(get_session)
-) -> DbPerson:
+async def add_person(person: Person, session: AsyncSession = Depends(get_session)) -> DbPerson:
     """
     Добавить объект человека в БД
     """
-    person = DbPerson(
-        name=person.name, sirname=person.sirname, birthday=person.birthday
-    )
+    person = DbPerson(name=person.name, sirname=person.sirname, birthday=person.birthday)
     session.add(person)
     await session.commit()
     await session.refresh(person)

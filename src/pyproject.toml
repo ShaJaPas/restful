@@ -10,6 +10,7 @@ python = "^3.10"
 fastapi = "^0.88.0"
 uvicorn = "^0.20.0"
 sqlmodel = "^0.0.8"
+alembic = "^1.8.1"
 asyncpg = "^0.27.0"
 
 
@@ -19,6 +20,7 @@ black = {version = "^22.10.0", allow-prereleases = true}
 flake8 = {version = "^6.0.0", allow-prereleases = true}
 httpx = "^0.23.1"
 mypy = "^0.991"
+pytest-alembic = "^0.9.1"
 
 [build-system]
 requires = ["poetry-core"]

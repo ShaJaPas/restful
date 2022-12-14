@@ -8,16 +8,29 @@ services:
       POSTGRES_DB: restful
       POSTGRES_USER: rest
       POSTGRES_PASSWORD: rest
+      PGDATA: /var/lib/postgresql/data/
     ports:
       - "5432:5432"
     restart: always
     volumes:
       - psql:/var/lib/postgresql/data:rw
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=test@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - psql
+
   app:
     build: ./src
     container_name: app
-    command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    command: >
+      sh -c "poetry run alembic upgrade head && poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000"
     ports:
       - 8000:8000
     environment:
