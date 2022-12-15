@@ -70,7 +70,7 @@ async def get_person(session: AsyncSession = Depends(get_session)) -> list[DbPer
     ]
 
 
-@app.post("/people")
+@app.post("/people", response_model=DbPerson, status_code=status.HTTP_201_ACCEPTED)
 async def add_person(person: Person, session: AsyncSession = Depends(get_session)) -> DbPerson:
     """
     Добавить объект человека в БД

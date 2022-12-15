@@ -43,7 +43,7 @@ def test_geometric_sum(
 async def test_get_person(test_app_async: AsyncClient) -> None:
     person = Person(name="Ivan", sirname="Ivanov", birthday=date(2022, 1, 1)).json()
     response: Response = await test_app_async.post("/people", content=person)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
 
     response = await test_app_async.get("/people")
     assert response.status_code == status.HTTP_200_OK
