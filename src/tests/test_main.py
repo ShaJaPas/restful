@@ -1,7 +1,9 @@
+from datetime import date
 import pytest
 from fastapi import status
-from httpx import Response
+from httpx import AsyncClient, Response
 from starlette.testclient import TestClient
+from app.models import Person
 
 
 @pytest.mark.parametrize(
@@ -35,3 +37,21 @@ def test_geometric_sum(
     assert response.status_code == status_code
     if status_code == status.HTTP_200_OK:
         assert response.json() == result
+
+
+@pytest.mark.asyncio
+async def test_get_person(test_app_async: AsyncClient) -> None:
+    person = Person(name="Ivan", sirname="Ivanov", birthday=date(2022, 1, 1)).json()
+    response: Response = await test_app_async.post("/people", content=person)
+    assert response.status_code == status.HTTP_200_OK
+
+    response = await test_app_async.get("/people")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == [
+        {
+            "name": "Ivan",
+            "sirname": "Ivanov",
+            "birthday": str(date(2022, 1, 1)),
+            "id": 1,
+        }
+    ]

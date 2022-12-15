@@ -4,15 +4,10 @@ from pydantic import BaseModel
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db import get_session, dispose_db
+from app.db import get_session
 from app.models import DbPerson, Person
 
 app = FastAPI()
-
-
-@app.on_event("shutdown")
-async def on_shutdown() -> None:
-    await dispose_db()
 
 
 class BasicResponse(BaseModel):
