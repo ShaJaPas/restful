@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlmodel import SQLModel, Field
+from sqlmodel import Field, SQLModel
 
 
 class Person(SQLModel):
@@ -14,4 +14,4 @@ class Person(SQLModel):
 
 
 class DbPerson(Person, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: int = Field(default=None, primary_key=True)  # noqa

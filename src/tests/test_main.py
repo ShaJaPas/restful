@@ -1,8 +1,10 @@
 from datetime import date
+
 import pytest
 from fastapi import status
 from httpx import AsyncClient, Response
 from starlette.testclient import TestClient
+
 from app.models import Person
 
 
@@ -39,7 +41,7 @@ def test_geometric_sum(
         assert response.json() == result
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_get_person(test_app_async: AsyncClient) -> None:
     person = Person(name="Ivan", sirname="Ivanov", birthday=date(2022, 1, 1)).json()
     response: Response = await test_app_async.post("/people", content=person)

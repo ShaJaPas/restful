@@ -1,15 +1,15 @@
+import asyncio
 import os
 from typing import AsyncGenerator, Generator
-import asyncio
 
 import pytest
 from httpx import AsyncClient
-from sqlmodel import SQLModel
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.testclient import TestClient
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
 
 from app.db import get_session
 from app.main import app
@@ -47,7 +47,7 @@ async def override_get_session() -> AsyncGenerator[AsyncSession, None]:
 app.dependency_overrides[get_session] = override_get_session
 
 
-@pytest.fixture
+@pytest.fixture()
 def test_app() -> TestClient:
     client = TestClient(app)
     return client
@@ -59,7 +59,9 @@ async def create_db() -> None:
         isolation_level="AUTOCOMMIT",
     )
     async with engine.connect() as conn:
-        await conn.execute(text(f"CREATE DATABASE {TEST_DB_NAME} OWNER {POSTGRES_USER}"))
+        await conn.execute(
+            text(f"CREATE DATABASE {TEST_DB_NAME} OWNER {POSTGRES_USER}")
+        )
         await conn.close()
     await init_db()
 
@@ -75,7 +77,7 @@ async def drop_db() -> None:
         await conn.close()
 
 
-@pytest.fixture
+@pytest.fixture()
 def test_app_async() -> Generator[AsyncClient, None, None]:
     asyncio.get_event_loop().run_until_complete(create_db())
     try:

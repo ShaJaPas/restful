@@ -1,8 +1,8 @@
-from fastapi import Depends, FastAPI, Query, status, Header
+from fastapi import Depends, FastAPI, Header, Query, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from app.db import get_session
 from app.models import DbPerson, Person
